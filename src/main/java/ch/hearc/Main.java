@@ -1,6 +1,7 @@
 package ch.hearc;
 
 
+import com.github.opendevl.JFlat;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -18,19 +19,10 @@ import org.json.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.CDL;
-
 import java.io.*;
 import java.io.File;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URL;
-
-
-import java.net.URLEncoder;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 
@@ -81,8 +73,6 @@ public class Main {
 
         try (CloseableHttpClient httpClient = HttpClients.createDefault();
              CloseableHttpResponse response = httpClient.execute(post)) {
-
-            // System.out.println(EntityUtils.toString(response.getEntity()));
 
             JSONParser parser = new JSONParser();
             JSONObject json = (JSONObject) parser.parse(EntityUtils.toString(response.getEntity()));
@@ -149,6 +139,8 @@ public class Main {
             System.out.println(prettyJsonString);
 
 
+            // Export to CSV
+
             org.json.JSONArray jsonArray = new JSONArray();
             jsonArray.put(data_obj);
 
@@ -156,10 +148,13 @@ public class Main {
 
             File file = new File(sb.toString());
             String csv = CDL.toString(jsonArray);
-            FileUtils.writeStringToFile(file, csv);
+            FileUtils.writeStringToFile(file, csv, "utf-8");
+
 
             // Fermeture de la connexion
             con.disconnect();
+
+            System.out.println("\n Un fichier csv a été créer dans votre dossier");
 
         } catch (Exception ex) {
             ex.printStackTrace();
